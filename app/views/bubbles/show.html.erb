@@ -36,10 +36,10 @@
 <% end %>
 
 <div data-controller="beacon" data-beacon-url-value="<%= bucket_bubble_readings_url(@bubble.bucket, @bubble) %>">
-  <div class="card__container position-relative <%= "card__container--pointing" unless @bubble.published? %>">
+  <div class="card-container position-relative <%= "card-container--pointing" unless @bubble.published? %>">
     <%= render "bubbles/card", bubble: @bubble %>
 
-    <div class="card__actions flex flex-column gap-half">
+    <div class="card-actions flex flex-column gap-half">
       <%= render "bubbles/color", bubble: @bubble %>
       <%= render "bubbles/image", bubble: @bubble %>
       <%= button_to bucket_bubble_path(@bubble.bucket, @bubble),
@@ -53,7 +53,7 @@
 
 
     <% if @bubble.published? %>
-      <div class="card__actions card__actions--right flex flex-column gap-half">
+      <div class="card-actions card-actions--right flex flex-column gap-half">
         <%= turbo_frame_tag dom_id(@bubble, :watch), src: bucket_bubble_watch_path(@bubble.bucket, @bubble), refresh: :morph %>
         <%= turbo_frame_tag dom_id(@bubble, :pin), src: bucket_bubble_pin_path(@bubble.bucket, @bubble), refresh: :morph %>
       </div>
