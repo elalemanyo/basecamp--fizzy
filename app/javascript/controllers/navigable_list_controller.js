@@ -13,20 +13,59 @@ export default class extends Controller {
   }
 
   connect() {
-    this.reset()
+    // bind handlers
+    this._onActivate = this.activate.bind(this)
+    this._onDeactivate = this.deactivate.bind(this)
+
+    // listen for element-targeted events (dispatched by collapsible_columns)
+    this.element.addEventListener("navigable-list:activate", this._onActivate)
+    this.element.addEventListener("navigable-list:deactivate", this._onDeactivate)
+
+    // If the list is not inside a collapsible column, make it active by default
+    const insideColumn = !!this.element.closest('[data-collapsible-columns-target="column"]')
+    this.active = !insideColumn
+
+    // initialize selection for standalone lists
+    if (this.active) {
+      this.reset()
+    }
+  }
+
+  disconnect() {
+    this.element.removeEventListener("navigable-list:activate", this._onActivate)
+    this.element.removeEventListener("navigable-list:deactivate", this._onDeactivate)
   }
 
   // Actions
 
-  reset(event) {
-    if (this.reverseOrderValue) {
-      this.selectLast()
-    } else {
-      this.selectFirst()
+  // generic public API used by collapsible_columns (column-agnostic)
+  activate() {
+    if (this.active) return
+    this.active = true
+    if (this.reverseOrderValue) this.selectLast()
+    else this.selectFirst()
+  }
+
+  deactivate() { // or blur()
+    if (!this.active) return
+    this.active = false
+    this.#clearSelection() // clear aria-selected etc.
+    if (this.hasInputTarget) this.inputTarget.removeAttribute("aria-activedescendant")
+    if (this.currentItem && typeof this.currentItem.blur === "function") {
+      try { this.currentItem.blur() } catch (e) {}
     }
+    this.currentItem = null
+  }
+
+  reset(event) {
+    if (!this.active) return
+
+    this.reverseOrderValue ? this.selectLast() : this.selectFirst()
   }
 
   navigate(event) {
+    if (!this.active) return
+
     this.#keyHandlers[event.key]?.call(this, event)
   }
 

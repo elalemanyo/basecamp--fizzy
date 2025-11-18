@@ -184,7 +184,16 @@ export default class extends Controller {
   }
 
   #focus(column) {
-    this.dispatch("focus", { detail: { column } })
+    // this.dispatch("focus", { detail: { column } })
+    const navigableLists = Array.from(document.querySelectorAll('.card-columns [data-controller~="navigable-list"]'))
+
+    navigableLists.forEach(list => {
+      if (column.contains(list)) {
+        list.dispatchEvent(new CustomEvent("navigable-list:activate", { bubbles: false }))
+      } else {
+        list.dispatchEvent(new CustomEvent("navigable-list:deactivate", { bubbles: false }))
+      }
+    })
   }
 
   get allColumns() {
