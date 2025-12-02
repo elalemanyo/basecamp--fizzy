@@ -1,9 +1,6 @@
 david:
   identity: david
 
-david_api:
-  identity: david
-
 kevin:
   identity: kevin
 
@@ -11,7 +8,4 @@ jz:
   identity: jz
 
 jason:
-  identity: jason
-
-jason_api:
   identity: jason
